@@ -29,7 +29,8 @@ class PlaylistTrackType extends AbstractType
                 'query_builder' => function (EntityRepository $er): QueryBuilder {
                     return $er->createQueryBuilder('p')
                         ->where('p.user = :user')
-                        ->setParameter('user', $this->security->getUser());
+                        ->setParameter('user', $this->security->getUser())
+                        ->orderBy('p.name', 'ASC');
                 },
                 'choice_label' => 'name',
                 'multiple' => true,
