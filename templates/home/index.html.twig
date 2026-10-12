@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Harmonia{% endblock %}
+
+{% block body %}
+    <div class="container">
+
+        {% include "components/album-loop.html.twig" with {
+            'title': 'EP',
+            'albums': eps
+        } %}
+
+        {% include "components/album-loop.html.twig" with {
+            'title': 'Singles',
+            'albums': singles
+        } %}
+
+        {% include "components/album-loop.html.twig" with {
+            'title': 'Albums',
+        } %}
+
+    </div>
+
+{% endblock %}
