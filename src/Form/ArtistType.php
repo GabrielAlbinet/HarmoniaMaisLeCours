@@ -50,10 +50,6 @@ class ArtistType extends AbstractType
     {
         $resolver->setDefaults([
             'data_class' => Artist::class,
-            'attr' => [
-                // Attributs de la balise FORM
-                'class' => 'col-md-6 col-12 mx-auto',
-            ]
         ]);
     }
 }

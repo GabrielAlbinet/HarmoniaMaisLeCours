@@ -1,0 +1,22 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Harmonia {{ album.title }}{% endblock %}
+
+{% block content %}
+    <div class="card" style="width: 50rem;">
+        <img src="{{ asset(album.poster) }}" class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">{{ album.title }}</h5>
+            <span class="badge text-bg-secondary">{{ album.type }}</span>
+            <p class="card-text">Artist : {{ album.artist.stageName }} - Released : {{ album.releasedAt|date('m/Y') }}</p>
+            <p class="card-text">Number of tracks : {{ album.tracks|length }}</p>
+            <a href="{{ path('admin_artist_show', {'id': album.artist.id}) }}" class="btn btn-primary">Artist Page</a>
+            <a href="{{ path('admin_album_edit', {'id': album.id}) }}" class="btn btn-primary">Edit Album</a>
+            <ul>
+                {% for track in album.tracks %}
+                    <li>{{ track.title }} : {{ track.duration|date('i:s') }}sec</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}

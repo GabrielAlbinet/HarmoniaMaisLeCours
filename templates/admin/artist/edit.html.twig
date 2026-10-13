@@ -1,0 +1,33 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Harmonia Artist Manager{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+
+        <h1>Modifier l'artiste {{ artist.stageName }}</h1>
+
+        {{ form_start(form) }}
+        <div class="row">
+            <div class="col-md-6 col-12">
+                {{ form_row(form.stageName) }}
+            </div>
+            <div class="col-md-6 col-12">
+                {{ form_row(form.country) }}
+            </div>
+        </div>
+        {{ form_end(form) }}
+
+        <h2>Ses albums</h2>
+        <div class='row'>
+            {% if artist.albums|length > 0 %}
+                {% for album in artist.albums %}
+                    <div class='col-3 mb-2'>
+                        {% include "components/album-card.html.twig" with {album: album} %}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

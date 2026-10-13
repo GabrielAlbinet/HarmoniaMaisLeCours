@@ -1,0 +1,43 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Harmonia Albums{% endblock %}
+
+{% block content %}
+
+    <div class="d-flex mb-3">
+        <h2>Albums</h2>
+        <a class="btn btn-success ms-3 my-auto" href="{{ path('admin_album_new') }}">Ajouter</a>
+    </div>
+
+    <table class="table table-striped table-hover align-middle">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Artist</th>
+                <th>Type</th>
+                <th>Released</th>
+                <th>Tracks</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for album in albums %}
+                <tr>
+                    <td>{{ album.title }}</td>
+                    <td><a href="{{ path('admin_artist_show', {'id': album.artist.id}) }}">{{ album.artist.stageName }}</a></td>
+                    <td>{{ album.type }}</td>
+                    <td>{{ album.releasedAt|date('m/Y') }}</td>
+                    <td>{{ album.tracks|length }}</td>
+                    <td>
+                        <a href="{{ path('admin_album_show', {'id': album.id}) }}" class="btn btn-sm btn-outline-primary">Show</a>
+                        <a href="{{ path('admin_album_edit', {'id': album.id}) }}" class="btn btn-sm btn-outline-secondary">Edit</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">No album.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

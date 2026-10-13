@@ -3,9 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Favorite;
+use App\Entity\User;
 use App\Repository\FavoriteRepository;
 use App\Repository\TrackRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Psr\Container\ContainerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -13,6 +15,22 @@ use Symfony\Component\Routing\Attribute\Route;
 
 final class FavoriteController extends AbstractController
 {
+
+    #[Route('/favoris', name: 'app_favorite_index')]
+    public function index(FavoriteRepository $favoriteRepository): Response
+    {
+        /** @var User|null $user */
+        $user = $this->getUser();
+
+        if ($user === null) {
+            return $this->redirectToRoute("app_login");
+        }
+
+        return $this->render('favorite/index.html.twig', [
+            'favorites' => $favoriteRepository->findBy(['user' => $user], ['createdAt' => 'DESC']),
+        ]);
+    }
+
     #[Route('/favorite/{id}', name: 'app_favorite')]
     public function item($id, TrackRepository $trackRepository, FavoriteRepository $favoriteRepository, EntityManagerInterface $entityManagerInterface, Request $request): Response
     {

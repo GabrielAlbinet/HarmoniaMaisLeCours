@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+    <div class="container">
+        <h1>Mes favoris</h1>
+        <ul>
+            {% for favorite in favorites %}
+                <li>{{ favorite.track.title }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+{% endblock %}
+
+{% block title %}
+    Mes favoris
+{% endblock %}
+

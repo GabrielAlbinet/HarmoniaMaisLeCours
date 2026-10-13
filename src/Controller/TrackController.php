@@ -19,14 +19,11 @@ final class TrackController extends AbstractController
     #[Route('/track/{id}', name: 'app_track_item')]
     public function item($id, TrackRepository $trackRepository): Response
     {
-
         $track = $trackRepository->find($id);
         if ($track === null) {
             return $this->redirectToRoute('app_home');
         }
-        foreach ($track->getGenres() as $genre) {
-            dump($genre->getName());
-        }
+
         return $this->render('track/item.html.twig', [
             'track' => $track,
         ]);

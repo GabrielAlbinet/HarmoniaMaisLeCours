@@ -1,0 +1,45 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Harmonia Admin{% endblock %}
+
+{% block content %}
+    <h1>Dashboard</h1>
+    <div class="row">
+        <div class="col-lg-6 mb-3">
+            <div class="card" id="latest-albums">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="h5 mb-0">Derniers albums</h2>
+                    <a href="{{ path('admin_album_index') }}" class="btn btn-sm btn-outline-primary">Tous les albums</a>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for album in albums %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="{{ path('admin_album_show', {'id': album.id}) }}">{{ album.title }}</a>
+                            <span class="text-body-secondary small">{{ album.artist.stageName }} - {{ album.createdAt|date('d/m/Y') }}</span>
+                        </li>
+                    {% else %}
+                        <li class="list-group-item">Aucun album.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <div class="col-lg-6 mb-3">
+            <div class="card" id="latest-artists">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h2 class="h5 mb-0">Derniers artistes</h2>
+                    <a href="{{ path('admin_artist_index') }}" class="btn btn-sm btn-outline-primary">Tous les artistes</a>
+                </div>
+                <ul class="list-group list-group-flush">
+                    {% for artist in artists %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <a href="{{ path('admin_artist_show', {'id': artist.id}) }}">{{ artist.stageName }}</a>
+                            <span class="text-body-secondary small">{{ artist.createdAt|date('d/m/Y') }}</span>
+                        </li>
+                    {% else %}
+                        <li class="list-group-item">Aucun artiste.</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
+{% endblock %}

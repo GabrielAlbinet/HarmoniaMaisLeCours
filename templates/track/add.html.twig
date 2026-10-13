@@ -3,16 +3,21 @@
 {% block title %}Harmonia {{ album.title }} edit{% endblock %}
 
 {% block body %}
-    <h1>{{ album.artist.stageName }}</h1>
-    <h2>{{ album.title }}</h2>
-    {{ form_start(form) }}
-    <div>
-        {{ form_row(form.title) }}
-        {{ form_row(form.duration) }}
-        {{ form_row(form.number) }}
-        {{ form_row(form.isExplicit) }}
-        {{ form_row(form.genres) }}
+    <div class="container">
+        <h1>{{ album.artist.stageName }}</h1>
+        <h2>{{ album.title }}</h2>
+        {{ form_start(form) }}
+            <div class="row">
+                <div class="col-4">
+                    {{ form_row(form.title) }}
+                </div>
+                <div class="col-4">
+                    {{ form_row(form.duration) }}
+                </div>
+                <div class="col-4">
+                    {{ form_row(form.number) }}
+                </div>
+            </div>
+        {{ form_end(form) }}
     </div>
-    <button type="submit">Add Track</button>
-    {{ form_end(form) }}
 {% endblock %}

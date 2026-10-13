@@ -1,0 +1,27 @@
+{% extends 'admin/base.html.twig' %}
+
+{% block title %}Harmonia manager{% endblock %}
+
+{% block content %}
+
+    <div class="container">
+        <h1>Ajouter un album</h1>
+
+        {{ form_start(form) }}
+            <div class="row">
+                <div class="col-6">
+                    {{ form_row(form.title) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(form.releasedAt) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(form.artist) }}
+                </div>
+                <div class="col-6">
+                    {{ form_row(form.type) }}
+                </div>
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

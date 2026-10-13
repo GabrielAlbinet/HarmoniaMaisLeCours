@@ -18,9 +18,9 @@ COPY --link \
 # Ajouter composer
 COPY --link --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-RUN echo "memory_limit=1G" > /usr/local/etc/php/conf.d/memory_limit.ini
-RUN echo "post_max_size=256M" > /usr/local/etc/php/conf.d/post_max_size.ini
-RUN echo "upload_max_filesize=256M" > /usr/local/etc/php/conf.d/upload_max_filesize.ini
+RUN echo "memory_limit=2G" > /usr/local/etc/php/conf.d/memory_limit.ini
+RUN echo "post_max_size=512M" > /usr/local/etc/php/conf.d/post_max_size.ini
+RUN echo "upload_max_filesize=512M" > /usr/local/etc/php/conf.d/upload_max_filesize.ini
 
 RUN git config --system --add safe.directory /var/www/html
 

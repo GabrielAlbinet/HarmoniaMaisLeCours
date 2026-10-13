@@ -1,10 +1,13 @@
-<div class="card shadow" style="width: 18rem;">
-    <img src="{{ asset(album.poster) }}" class="card-img-top" alt="...">
-    <div class="card-body">
-        <h5 class="card-title">{{ album.title }}</h5>
-        <span class="badge text-bg-secondary">{{ album.type }}</span>
-        <p class="card-text">Artist : {{ album.artist.stageName }}</p>
-        <p class="card-text">Number of tracks : {{ album.tracks|length }}</p>
-        <a href="{{ path('app_album_item', {'id': album.id}) }}" class="btn btn-primary">Album page</a>
+<a href="{{ path('app_album_item', {'id': album.id}) }}" class="text-decoration-none">
+    <div class="card shadow" style="width: 18rem;">
+        <img src="{{ asset(album.poster) }}" class="card-img-top" alt="...">
+        <div class="card-body">
+            <h5 class="card-title">
+                {{ album.title }}
+                <span class="badge text-bg-secondary ms-2">{{ album.type }}</span>
+            </h5>
+            <p class="card-text p-0">Artist : {{ album.artist.stageName }}</p>
+            <p class="card-text p-0">Number of tracks : {{ album.tracks|length }}</p>
+        </div>
     </div>
-</div>
+</a>
