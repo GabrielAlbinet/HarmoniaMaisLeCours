@@ -9,19 +9,7 @@ use PHPUnit\Framework\Attributes\TestWith;
 
 class RegistrationControllerTest extends AbstractWebTestCase
 {
-    /** BLOC DE TEST 1 POUR LA VUE DE L'INSCRIPTION */
-
-    public function testFormExists(): void
-    {
-        $client = static::createClient();
-        $client->request('GET', self::URL_REGISTER);
-
-        $this->assertSelectorExists('input[name="registration_form[email]"]');
-        $this->assertSelectorExists('input[name="registration_form[plainPassword][first]"]');
-        $this->assertSelectorExists('input[name="registration_form[plainPassword][second]"]');
-        $this->assertSelectorExists('input[name="registration_form[agreeTerms]"]');
-        $this->assertSelectorTextContains('button[type="submit"]', "S'inscrire");
-    }
+    /* BLOC 1 : Affichage et vue globale */
 
     public function testAccessOK(): void
     {
@@ -32,7 +20,43 @@ class RegistrationControllerTest extends AbstractWebTestCase
         $this->assertSelectorTextContains('h1', 'Inscription');
     }
 
-    /** BLOC DE TEST 2 POUR LA VALIDITÉ DE L'INSCRIPTION */
+    #[TestWith(['input[name="registration_form[email]"]'])]
+    #[TestWith(['input[name="registration_form[plainPassword][first]"][type="password"]'])]
+    #[TestWith(['input[name="registration_form[plainPassword][second]"][type="password"]'])]
+    #[TestWith(['input[name="registration_form[agreeTerms]"][type="checkbox"]'])]
+    #[TestWith(['button[type="submit"]'])]
+    public function testFormFieldExists(string $selector): void
+    {
+        $client = static::createClient();
+        $client->request('GET', self::URL_REGISTER);
+
+        $this->assertSelectorExists($selector);
+    }
+
+
+
+    #[TestWith(['Email'])]
+    #[TestWith(['Accepter les termes et conditions'])]
+    #[TestWith(["S'inscrire"])]
+    public function testFormLabels(string $text): void
+    {
+        $client = static::createClient();
+        $client->request('GET', self::URL_REGISTER);
+
+        $this->assertSelectorTextContains('form', $text);
+    }
+
+    public function testFormIsEmptyOnFirstDisplay(): void
+    {
+        $client = static::createClient();
+        $client->request('GET', self::URL_REGISTER);
+
+        $this->assertInputValueSame('registration_form[email]', '');
+        $this->assertCheckboxNotChecked('registration_form[agreeTerms]');
+    }
+
+
+    /* BLOC 2 de Tests : l'inscription passe la douane */
 
     public function testRegisterOK(): void
     {
@@ -47,17 +71,40 @@ class RegistrationControllerTest extends AbstractWebTestCase
         $this->assertNotNull($user);
         $this->assertNotSame('secret123', $user->getPassword());
 
-        $entityManager = $this->getContainer()->get(EntityManagerInterface::class);
-        $entityManager->remove($user);
-        $entityManager->flush();
+        $this->removeUser($email);
     }
+
+
+
+    #[TestWith(['classique', 'secret123'])]
+    #[TestWith(['mdp.long', 'un-mot-de-passe-tres-long-123'])]
+    #[TestWith(['mdp.special', 'P@ssw0rd!#2026'])]
+    public function testRegisterRedirectsToHome(string $prefix, string $password): void
+    {
+        $client = static::createClient();
+        $email = $prefix . '.' . uniqid() . '@example.com';
+
+        $this->submitRegistration($client, $email, $password, $password, true);
+
+        $this->assertResponseStatusCodeSame(302);
+        $this->assertResponseRedirects(self::URL_HOME);
+
+        $client->followRedirect();
+
+        $this->assertResponseIsSuccessful();
+        $this->assertSelectorTextContains('h1', 'Les dernières sorties');
+
+        $this->removeUser($email);
+    }
+
+
+    /* BLOC 3 de Tests : l'inscription foire */
 
     #[TestWith(['nouveau@example.com', 'secret123', 'autre', true, 'Les deux champs doivent être identiques.'])]
     #[TestWith(['nouveau@example.com', 'secret123', 'secret123', false, 'You should agree to our terms.'])]
     #[TestWith(['kelly.cassin@example.com', 'secret123', 'secret123', true, 'There is already an account with this email'])]
-
-    /** BLOC DE TEST 3 POUR LES INSCRIPTIONS REFUSÉES */
-
+    #[TestWith(['pas-un-email', 'secret123', 'secret123', true, 'This value is not a valid email address.'])]
+    #[TestWith(['nouveau@example.com', 'court', 'court', true, 'Le mot de passe doit contenir au moins 6 caractères.'])]
     public function testRegisterKO(
         string $email,
         string $password,
@@ -72,5 +119,14 @@ class RegistrationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(422);
         $this->assertSelectorTextContains('form', $message);
+    }
+
+    private function removeUser(string $email): void
+    {
+        $user = $this->getRepository(UserRepository::class)->findOneBy(['email' => $email]);
+
+        $entityManager = $this->getContainer()->get(EntityManagerInterface::class);
+        $entityManager->remove($user);
+        $entityManager->flush();
     }
 }
