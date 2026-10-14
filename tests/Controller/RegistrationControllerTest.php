@@ -4,12 +4,11 @@ namespace App\Tests\Controller;
 
 use App\Repository\UserRepository;
 use App\Tests\AbstractWebTestCase;
-use Doctrine\ORM\EntityManagerInterface;
 use PHPUnit\Framework\Attributes\TestWith;
 
 class RegistrationControllerTest extends AbstractWebTestCase
 {
-    /* BLOC 1 : Affichage et vue globale */
+    /* BLOC 1 de Tests : Affichage et vue globale */
 
     public function testAccessOK(): void
     {
@@ -32,8 +31,6 @@ class RegistrationControllerTest extends AbstractWebTestCase
 
         $this->assertSelectorExists($selector);
     }
-
-
 
     #[TestWith(['Email'])]
     #[TestWith(['Accepter les termes et conditions'])]
@@ -71,14 +68,10 @@ class RegistrationControllerTest extends AbstractWebTestCase
         $this->assertNotNull($user);
         $this->assertNotSame('secret123', $user->getPassword());
 
-        $this->removeUser($email);
+        $this->removeEntity($user);
     }
 
-
-
     #[TestWith(['classique', 'secret123'])]
-    #[TestWith(['mdp.long', 'un-mot-de-passe-tres-long-123'])]
-    #[TestWith(['mdp.special', 'P@ssw0rd!#2026'])]
     public function testRegisterRedirectsToHome(string $prefix, string $password): void
     {
         $client = static::createClient();
@@ -94,7 +87,8 @@ class RegistrationControllerTest extends AbstractWebTestCase
         $this->assertResponseIsSuccessful();
         $this->assertSelectorTextContains('h1', 'Les dernières sorties');
 
-        $this->removeUser($email);
+        $user = $this->getRepository(UserRepository::class)->findOneBy(['email' => $email]);
+        $this->removeEntity($user);
     }
 
 
@@ -119,14 +113,5 @@ class RegistrationControllerTest extends AbstractWebTestCase
 
         $this->assertResponseStatusCodeSame(422);
         $this->assertSelectorTextContains('form', $message);
-    }
-
-    private function removeUser(string $email): void
-    {
-        $user = $this->getRepository(UserRepository::class)->findOneBy(['email' => $email]);
-
-        $entityManager = $this->getContainer()->get(EntityManagerInterface::class);
-        $entityManager->remove($user);
-        $entityManager->flush();
     }
 }

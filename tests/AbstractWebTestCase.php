@@ -4,6 +4,7 @@ namespace App\Tests;
 
 use App\Repository\UserRepository;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\KernelBrowser;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
@@ -31,6 +32,24 @@ abstract class AbstractWebTestCase extends WebTestCase
         return $this->getContainer()->get($repoClass);
     }
 
+    protected function getEntityManager(): EntityManagerInterface
+    {
+        return $this->getContainer()->get(EntityManagerInterface::class);
+    }
+
+    protected function DataSubmit(
+        KernelBrowser $client,
+        string        $url,
+        string        $button,
+        array         $fields
+    ): void
+    {
+        $crawler = $client->request('GET', $url);
+        $form = $crawler->selectButton($button)->form();
+
+        $client->submit($form, $fields);
+    }
+
     protected function submitRegistration(
         KernelBrowser $client,
         string        $email,
@@ -39,19 +58,18 @@ abstract class AbstractWebTestCase extends WebTestCase
         bool          $agreeTerms
     ): void
     {
-        $crawler = $client->request('GET', self::URL_REGISTER);
-        $form = $crawler->selectButton("S'inscrire")->form();
+        $this->DataSubmit($client, self::URL_REGISTER, "S'inscrire", [
+            'registration_form[email]' => $email,
+            'registration_form[plainPassword][first]' => $password,
+            'registration_form[plainPassword][second]' => $confirmation,
+            'registration_form[agreeTerms]' => $agreeTerms,
+        ]);
+    }
 
-        $form['registration_form[email]'] = $email;
-        $form['registration_form[plainPassword][first]'] = $password;
-        $form['registration_form[plainPassword][second]'] = $confirmation;
-
-        if ($agreeTerms) {
-            $form['registration_form[agreeTerms]']->tick();
-        } else {
-            $form['registration_form[agreeTerms]']->untick();
-        }
-
-        $client->submit($form);
+    protected function removeEntity(object $entity): void
+    {
+        $entityManager = $this->getEntityManager();
+        $entityManager->remove($entity);
+        $entityManager->flush();
     }
 }
