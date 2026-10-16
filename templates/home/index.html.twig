@@ -5,6 +5,13 @@
 {% block body %}
     <div class="container">
 
+        <button id="btn-pokemon">Y a-t-il un genre pokemon ?</button>
+
+        <button id="btn-ajax-2"> Bouton pour testes l'ajax 2</button>
+
+        <input type="text" id="search-album" placeholder="Rechercher un album">
+        <div id="search-results"></div>
+
         <h1 class="text-center">Les dernières sorties</h1>
 
         {% include "components/album-loop.html.twig" with {
